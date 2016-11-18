@@ -17,6 +17,9 @@
 <%@ page import="java.awt.print.*" %>
 
 <%!
+	/*
+		hold connection parameter between client & server
+	*/
 	public class PrintParameter {
 		public class Param {
 			String type;
@@ -95,7 +98,11 @@
 	    	}
 	    }
 	}
-
+	
+	/*
+		TODO seems that, there should be an adapter to map Config & PrinterParameter. currently this logic contained in print method
+		hold config that server can accept
+	*/
 	public class Config {
 		public class PrinterNode {
 			String type;
@@ -324,7 +331,7 @@
 				 	PrinterJob job = PrinterJob.getPrinterJob();
 				 	job.setPrintService(printService);
 				 	
-				 	//custom format & paper
+				 	//custom format & paper, currently useing the default setting of the printer
 				 	PageFormat pf = job.defaultPage();
 					Paper paper = pf.getPaper();
 					paper.setImageableArea(0, 0, paper.getWidth(), paper.getHeight());
@@ -345,9 +352,11 @@
 				 	}
 				 	
 				 	if(node.type.equals("PalletLocation") && node.sub_type.equals("t1(8.5x11)")) {
-				 		
+				 		job_attrs.add(Sides.ONE_SIDED);
 				 	}
 				 	
+				 	int copys = Integer.parseInt(p.count);
+				 	job.setCopies(copys);
 					job.print(job_attrs);
 					System.out.print("Pushing job");
 					
@@ -451,6 +460,7 @@
 	    				}
 	    				
 	    				if(pp.getName().equals("params")) {
+	    					System.out.print(pp.getStringValue());
 	    					printParam.loadFromParamJsonStr(pp.getStringValue());
 	    				}
 	    			}
